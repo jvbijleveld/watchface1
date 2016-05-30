@@ -1,0 +1,23 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "jeffrey@vanbijleveld.nl",
+    "enableMultiJS": true,
+    "longName": "watchFace1",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "watchFace1",
+    "targetPlatforms": [
+        "aplite"
+    ],
+    "uuid": "24b0f7f8-de0e-4984-b436-c6e7827a5ed6",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
