@@ -4,6 +4,7 @@ static TextLayer *s_time_layer;
 static int s_battery_level;
 static Layer *s_battery_layer;
 static TextLayer *s_battery_percentage;
+static TextLayer *s_date_layer;
 
 static void update_time() {
   // Get a tm structure
@@ -11,9 +12,12 @@ static void update_time() {
   struct tm *tick_time = localtime(&temp);
 
   static char s_buffer[8];
+  static char d_buffer[8];
   strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
-   
+  strftime(d_buffer, sizeof(d_buffer), "%a %d", tick_time); 
+  
   text_layer_set_text(s_time_layer, s_buffer);
+  text_layer_set_text(s_date_layer, d_buffer);
 }
 
 static void battery_update_proc(Layer *layer, GContext *ctx) {
@@ -60,35 +64,48 @@ static void battery_update_proc(Layer *layer, GContext *ctx) {
 }
 
 static void main_window_load(Window *window) {
-  // Get information about the Window
+  static GFont s_time_font;
+  static GFont s_date_font;
+  
+  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BERLIN_SANS_FB_48));
+  s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BERLIN_SANS_FB_20));
+  
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  s_time_layer = text_layer_create(GRect(4, PBL_IF_ROUND_ELSE(58, 52), (bounds.size.w-8), 50));
+  s_time_layer = text_layer_create(GRect(4, 20, (bounds.size.w-8), 50));
   s_battery_layer = layer_create(GRect(0, 0, bounds.size.w, bounds.size.h));
   s_battery_percentage = text_layer_create(GRect(bounds.size.w-28, 4, 20, 25));
+  s_date_layer = text_layer_create(GRect(4, 75, (bounds.size.w-8), 35));
   
   layer_set_update_proc(s_battery_layer, battery_update_proc);
   layer_add_child(window_get_root_layer(window), s_battery_layer);
   
+  //battery percentage
   text_layer_set_background_color(s_battery_percentage, GColorBlack);
   text_layer_set_text_color(s_battery_percentage, GColorWhite);
-  //text_layer_set_font(s_battery_percentage, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
-  //text_layer_set_text_alignment(s_battery_percentage, GTextAlignmentCenter);
-  
   layer_add_child(window_layer, text_layer_get_layer(s_battery_percentage));
   
+  //time layer
   text_layer_set_background_color(s_time_layer, GColorBlack);
   text_layer_set_text_color(s_time_layer, GColorWhite);
-  text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  text_layer_set_font(s_time_layer, s_time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
-
   layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
+  
+  //date layer
+  text_layer_set_background_color(s_date_layer, GColorBlack);
+  text_layer_set_text_color(s_date_layer, GColorWhite);
+  text_layer_set_font(s_date_layer, s_date_font);
+  text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
+  layer_add_child(window_layer, text_layer_get_layer(s_date_layer));
 }
 
 static void main_window_unload(Window *window){
   text_layer_destroy(s_time_layer);
+  text_layer_destroy(s_date_layer);
   layer_destroy(s_battery_layer);
+  text_layer_destroy(s_battery_percentage);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -102,7 +119,7 @@ static void battery_callback(BatteryChargeState state) {
   static char s_buffer[8];
   snprintf(s_buffer,sizeof(s_buffer), "%d", s_battery_level);
    
-  text_layer_set_text(s_battery_percentage, s_buffer);
+  //text_layer_set_text(s_battery_percentage, s_buffer);
 }
 
 static void init(){

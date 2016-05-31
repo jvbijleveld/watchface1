@@ -8,12 +8,26 @@
     "longName": "watchFace1",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "fonts/BRLNSDB_48.TTF",
+                "name": "FONT_BERLIN_SANS_FB_48",
+                "targetPlatforms": null,
+                "type": "font"
+            },
+            {
+                "file": "fonts/BRLNSDB_28.TTF",
+                "name": "FONT_BERLIN_SANS_FB_20",
+                "targetPlatforms": null,
+                "type": "font"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "watchFace1",
     "targetPlatforms": [
-        "aplite"
+        "aplite",
+        "basalt"
     ],
     "uuid": "24b0f7f8-de0e-4984-b436-c6e7827a5ed6",
     "versionLabel": "1.0",
