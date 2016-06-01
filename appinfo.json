@@ -1,7 +1,10 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "KEY_CONDITIONS": 1,
+        "KEY_TEMPERATURE": 0
+    },
     "capabilities": [
-        ""
+        "location"
     ],
     "companyName": "jeffrey@vanbijleveld.nl",
     "enableMultiJS": true,
@@ -26,10 +29,9 @@
     "sdkVersion": "3",
     "shortName": "watchFace1",
     "targetPlatforms": [
-        "aplite",
-        "basalt"
+        "aplite"
     ],
-    "uuid": "24b0f7f8-de0e-4984-b436-c6e7827a5ed6",
+    "uuid": "adbfc9de-c619-42cb-8936-8ea2599f5099",
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": false
