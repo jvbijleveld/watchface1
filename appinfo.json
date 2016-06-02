@@ -8,10 +8,16 @@
     ],
     "companyName": "jeffrey@vanbijleveld.nl",
     "enableMultiJS": true,
-    "longName": "watchFace1",
+    "longName": "watchFace:one",
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "file": "images/phoneConnected",
+                "name": "IMAGE_PHONE_CONNECTED",
+                "targetPlatforms": null,
+                "type": "bitmap"
+            },
             {
                 "file": "fonts/BRLNSDB_48.TTF",
                 "name": "FONT_BERLIN_SANS_FB_48",
@@ -27,13 +33,14 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "watchFace1",
+    "shortName": "watchFace:one",
     "targetPlatforms": [
-        "aplite"
+        "aplite",
+        "basalt"
     ],
-    "uuid": "adbfc9de-c619-42cb-8936-8ea2599f5099",
+    "uuid": "7e0d64fb-229b-4c0a-ae2e-675f20305ec4",
     "versionLabel": "1.0",
     "watchapp": {
-        "watchface": false
+        "watchface": true
     }
 }
