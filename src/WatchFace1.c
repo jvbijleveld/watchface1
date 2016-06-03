@@ -27,7 +27,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   // If all data is available, use it
   if(temp_tuple && conditions_tuple) {
-    snprintf(temperature_buffer, sizeof(temperature_buffer), "%dc", (int)temp_tuple->value->int32);
+    snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°", (int)temp_tuple->value->int32);
     //snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions_tuple->value->cstring);
     //snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
     text_layer_set_text(s_weather_layer, temperature_buffer);
@@ -96,15 +96,15 @@ static void battery_update_proc(Layer *layer, GContext *ctx) {
       size = 0;
     }else{
       size = (int)(float)(((float)(s_battery_level % 25) / 25.0F) * (bounds.size.h));
+      graphics_fill_rect(ctx, GRect((bounds.size.w-4), ((bounds.size.h - size + 2)), 2, size-4), 0, GCornerNone);
     }
-    
-    graphics_fill_rect(ctx, GRect((bounds.size.w-4), ((bounds.size.h - size + 2)), 2, size-4), 0, GCornerNone);
     graphics_fill_rect(ctx, GRect(1, (bounds.size.h-4), (bounds.size.w-4), 2), 0, GCornerNone);
   }
   
   if(s_battery_level > 25){
     size = (int)(float)(((float)(s_battery_level % 25) / 25.0F) * (bounds.size.w));
-    graphics_fill_rect(ctx, GRect(2, bounds.size.h-4, size-4, 2), 0, GCornerNone);
+
+    graphics_fill_rect(ctx, GRect(2, bounds.size.h-4, size, 2), 0, GCornerNone);
     
     graphics_fill_rect(ctx, GRect(1, 1, 2, (bounds.size.h-3)), 0, GCornerNone);  
   }else{
@@ -129,7 +129,7 @@ static void main_window_load(Window *window) {
   s_battery_percentage = text_layer_create(GRect(bounds.size.w-28, 4, 20, 25));
   s_date_layer = text_layer_create(GRect(4, 75, (bounds.size.w-8), 35));
   s_weather_layer = text_layer_create(GRect(4, 115, (bounds.size.w-8), 35));
-  s_bt_icon_layer = bitmap_layer_create(GRect(5, 5, 12, 16));
+  s_bt_icon_layer = bitmap_layer_create(GRect(5, 5, 16, 16));
   
   layer_set_update_proc(s_battery_layer, battery_update_proc);
   layer_add_child(window_get_root_layer(window), s_battery_layer);
@@ -158,15 +158,13 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_weather_layer, GColorWhite);
   text_layer_set_font(s_weather_layer, s_h2_font);
   text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
-  text_layer_set_text(s_weather_layer, "..loading..");
+  text_layer_set_text(s_weather_layer, "..");
   layer_add_child(window_layer, text_layer_get_layer(s_weather_layer));
   
   //connection layer
   s_bt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_PHONE_CONNECTED);
   bitmap_layer_set_bitmap(s_bt_icon_layer, s_bt_icon_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_bt_icon_layer));
-  
-  bluetooth_callback(connection_service_peek_pebble_app_connection());
 }
 
 static void main_window_unload(Window *window){
@@ -200,28 +198,22 @@ static void init(){
     .load = main_window_load,
     .unload = main_window_unload
   });
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::main_window_created");
-  
   window_stack_push(s_main_window, true);
   
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::updateTime");
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "init::updateTime");
   update_time();
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::setBatteryState");
   battery_callback(battery_state_service_peek());
+  bluetooth_callback(connection_service_peek_pebble_app_connection());
   
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::Register Timer Ticker");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::register events");
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
-  
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::Register Battery event");
   battery_state_service_subscribe(battery_callback);
   
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::register AppMessage events");
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
   
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init::register BT event");
   connection_service_subscribe((ConnectionHandlers) {
     .pebble_app_connection_handler = bluetooth_callback
   });
